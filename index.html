@@ -73,6 +73,8 @@
   .btn-primary:hover { background: #085bc4; border-color: #085bc4; color: #fff; }
   .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
   .btn-danger:hover { background: #b3261e; border-color: #b3261e; color: #fff; }
+  .bnav-btn.active { color: var(--blue-txt) !important; }
+  .bnav-btn.active span:first-child { transform: scale(1.15); }
   .btn-green { background: var(--green-bg); color: var(--green-txt); border-color: var(--green); }
   .btn-green:hover { background: var(--green); color: #fff; }
   .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 6px; border-radius: 6px; color: var(--text2); transition: 0.2s; }
@@ -220,39 +222,82 @@
   /* V4 version badge */
   .version-badge { font-size: 10px; background: var(--blue); color: #fff; padding: 2px 6px; border-radius: 10px; font-weight: 700; letter-spacing: 0.5px; margin-left: 6px; }
 
+  /* ── MOBILE / iOS PWA ───────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); z-index: 20; }
-    .sidebar.mobile-open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
-    .hamburger { display: inline-flex; align-items: center; }
-    .main-pad { padding: 16px; }
+    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); z-index: 200; }
+    .sidebar.mobile-open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,0.4); }
+    .hamburger { display: inline-flex !important; align-items: center; min-width: 44px; min-height: 44px; font-size: 22px; }
+    .content { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+    #bottom-nav { display: flex !important; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-    .details-content { grid-template-columns: 1fr 1fr !important; }
-    .topbar { padding: 10px 12px; flex-wrap: wrap; gap: 6px; }
-    .topbar .actions { flex-wrap: wrap; }
+    .topbar { padding: 10px 12px; flex-wrap: nowrap; gap: 6px; overflow-x: auto; }
     #compliance-summary-bar { grid-template-columns: 1fr 1fr !important; }
     #safety-kpi-row { grid-template-columns: 1fr 1fr !important; }
   }
+
   @media (max-width: 640px) {
-    .kpi-grid { grid-template-columns: 1fr 1fr !important; }
-    .details-content { grid-template-columns: 1fr !important; }
-    /* Quick Add bar stacks vertically on phone */
-    #quick-add-bar > div:first-child { flex-direction: column !important; }
-    #quick-add-bar .form-group { min-width: 100% !important; }
-    /* Topbar: hide text labels on tiny screens */
-    #topbar-title-text { font-size: 14px; }
-    .topbar { padding: 8px 10px; }
-    /* Tables scroll horizontally */
-    .table-wrap { -webkit-overflow-scrolling: touch; }
-    /* Compliance summary 1 col on phone */
-    #compliance-summary-bar { grid-template-columns: 1fr 1fr !important; }
-    #safety-kpi-row { grid-template-columns: 1fr 1fr !important; }
-    /* Admin tabs scroll */
-    #admin-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
-    #admin-tabs .tab { white-space: nowrap; flex-shrink: 0; }
-    /* Master tabs scroll */
-    #master-tabs > div:first-child { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
-    #master-tabs .tab { white-space: nowrap; flex-shrink: 0; }
+    /* Touch targets — minimum 44px per Apple HIG */
+    .btn { min-height: 44px; padding: 0 14px; font-size: 14px; }
+    .nav-item { min-height: 44px; line-height: 44px; }
+    select, input[type="text"], input[type="number"], input[type="date"],
+    input[type="datetime-local"], textarea { min-height: 44px; font-size: 16px !important; /* prevents iOS zoom */ }
+
+    /* Layout */
+    .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    .main-pad { padding: 12px !important; }
+    .card { border-radius: 10px; }
+    .card-header { padding: 12px 16px; }
+
+    /* Topbar: compact on phone */
+    .topbar { padding: 8px 10px; gap: 4px; }
+    #topbar-title-text { font-size: 13px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .topbar > div:first-child { font-size: 11px; gap: 2px; }
+
+    /* Tables: horizontal scroll with momentum */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 600px; }
+    th, td { padding: 8px 10px !important; font-size: 12px !important; }
+
+    /* Quick Add: full-width stacked */
+    #quick-add-bar { padding: 12px !important; }
+    #quick-add-bar > div:first-child { flex-direction: column !important; gap: 10px !important; }
+    #quick-add-bar .form-group { min-width: 100% !important; width: 100% !important; }
+
+    /* All tab bars: horizontal scroll */
+    .tabs, #admin-tabs, #compliance-tabs, #eq-tabs {
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap !important; scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar, #admin-tabs::-webkit-scrollbar { display: none; }
+    .tab { white-space: nowrap; flex-shrink: 0; min-height: 44px; line-height: 44px; padding: 0 14px; font-size: 13px; }
+    #master-tabs { flex-direction: column !important; gap: 8px; }
+    #master-tabs > div:first-child { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; display: flex; }
+
+    /* Compliance summary */
+    #compliance-summary-bar { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    #safety-kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+
+    /* Modals: full screen on phone */
+    #add-modal > div, #dpr-preflight-modal > div {
+      width: 100% !important; max-width: 100% !important; margin: 0 !important;
+      border-radius: 16px 16px 0 0 !important; position: fixed !important;
+      bottom: 0 !important; left: 0 !important; right: 0 !important;
+      max-height: 90vh !important; overflow-y: auto !important;
+    }
+    #add-modal, #dpr-preflight-modal { align-items: flex-end !important; }
+
+    /* Form grids: single column */
+    .modal-grid { grid-template-columns: 1fr !important; }
+
+    /* NCR quick-add: stack */
+    #comp-tab-quality .card > div { flex-direction: column !important; }
+    #ncr-eq, #ncr-comp, #ncr-severity, #ncr-category { min-width: 100% !important; }
   }
+
+  /* iOS safe area — notch + home indicator */
+  .content { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  #bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
+  .topbar { padding-top: max(10px, env(safe-area-inset-top)); }
 
   @page { margin: 15mm; }
   @media print {
@@ -275,7 +320,27 @@
   <div id="idb-loading-msg" style="font-size:13px;color:var(--text3);">Opening database…</div>
 </div>
 
-<!-- SIDEBAR -->
+<!-- UPDATE BANNER -->
+<div id="update-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:9998; background:var(--blue); color:#fff; padding:10px 20px; text-align:center; font-size:13px; font-weight:600; gap:12px; align-items:center; justify-content:center;">
+  🆕 New version available — <button onclick="window.location.reload(true)" style="background:#fff; color:var(--blue); border:none; padding:4px 14px; border-radius:6px; font-weight:700; cursor:pointer; margin-left:8px;">Update Now</button>
+  <button onclick="document.getElementById('update-banner').style.display='none'" style="background:none;border:none;color:#fff;cursor:pointer;margin-left:4px;font-size:18px;">✕</button>
+</div>
+
+<!-- BOTTOM NAV (mobile only) -->
+<div id="bottom-nav" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:100; background:var(--bg2); border-top:1px solid var(--border); flex-direction:row; justify-content:space-around; align-items:stretch; padding-bottom:env(safe-area-inset-bottom);">
+  <button onclick="switchView('master');closeBottomNav()" id="bnav-master" class="bnav-btn active" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--blue-txt);">
+    <span style="font-size:20px;">📊</span><span style="font-size:10px;font-weight:600;">Dashboard</span>
+  </button>
+  <button onclick="switchView('compliance');closeBottomNav()" id="bnav-compliance" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
+    <span style="font-size:20px;">📋</span><span style="font-size:10px;font-weight:600;">Compliance</span>
+  </button>
+  <button onclick="toggleSidebar()" id="bnav-eq" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
+    <span style="font-size:20px;">🏭</span><span style="font-size:10px;font-weight:600;">Equipment</span>
+  </button>
+  <button onclick="switchView('admin');closeBottomNav()" id="bnav-admin" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
+    <span style="font-size:20px;">⚙️</span><span style="font-size:10px;font-weight:600;">Admin</span>
+  </button>
+</div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="sidebar" id="app-sidebar"></div>
 
@@ -1058,6 +1123,15 @@
                   <label>Auto-Backup Threshold (Unsaved Changes)</label>
                   <div style="display:flex; gap:12px;"><input type="number" id="admin-auto-backup" style="font-size:14px; width:100px;"><button class="btn btn-primary" onclick="saveGeneralSettings()">Save</button></div>
                 </div>
+                <div class="form-group" style="padding:0; margin-top:16px;">
+                  <label>GitHub Version Check URL <span style="font-weight:400; color:var(--text3);">(URL to version.json in your GitHub repo — for PWA auto-update)</span></label>
+                  <div style="display:flex; gap:12px;">
+                    <input type="url" id="admin-version-url" placeholder="https://raw.githubusercontent.com/YOUR_USERNAME/swing-tracker/main/version.json" style="font-size:13px; font-family:monospace;">
+                    <button class="btn btn-primary" onclick="saveVersionUrl()">Save</button>
+                    <button class="btn" onclick="checkForUpdate(true)">🔍 Check Now</button>
+                  </div>
+                  <div style="margin-top:6px; font-size:12px; color:var(--text3);">Current app version: <strong style="color:var(--text);" id="admin-version-display">—</strong></div>
+                </div>
                 <div style="border-top:1px solid var(--border); margin-top:16px; padding-top:16px;">
                   <div class="section-lbl" style="margin-bottom:12px;">Project Schedule (for S-Curve & Catch-Up)</div>
                   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -1506,7 +1580,11 @@ const DEFAULT_DPR_CONFIG = {
 
 const DEFAULT_PARAMS = { appName: 'SWING Fabrication Tracker', shiftStart: '08:00', shiftEnd: '18:00', excludeSundays: true, stageMaster: {...DEFAULT_STAGES}, trackerMap: [...DEFAULT_TRACKER], dprConfig: {...DEFAULT_DPR_CONFIG}, autoBackupThreshold: 10 };
 
-// ── DATA — populated asynchronously in initApp() ────────────────────────────
+// ── App Version ───────────────────────────────────────────────────────────────
+const APP_VERSION  = '4.9.0';
+const BUILD_DATE   = '2025-09-11';
+const VERSION_URL  = ''; // set in Admin → ⚙️ System Masters if hosting on GitHub Pages
+// ─────────────────────────────────────────────────────────────────────────────
 let EQUIPMENT_LIST = [];
 let PROJECT_PARAMS = {...DEFAULT_PARAMS};
 let activities = [];
@@ -1734,6 +1812,7 @@ function switchView(viewId) {
   document.getElementById('view-equipment').style.display = 'none';
   document.getElementById('view-admin').style.display = 'none';
   const vc = document.getElementById('view-compliance'); if(vc) vc.style.display = 'none';
+  updateBottomNav(viewId); // keep bottom nav in sync
   if(viewId === 'master') {
     const navM = document.getElementById('nav-master'); if(navM) navM.classList.add('active'); 
     document.getElementById('view-master').style.display = 'block'; document.getElementById('topbar-title-text').innerHTML = `📊 Master Dashboard`;
@@ -2615,6 +2694,8 @@ function renderAdminView() {
   document.getElementById('dpr-t-allcomps').checked = PROJECT_PARAMS.dprConfig.showAllComps;
   
   document.getElementById('admin-auto-backup').value = PROJECT_PARAMS.autoBackupThreshold;
+  const vUrlEl = document.getElementById('admin-version-url'); if(vUrlEl) vUrlEl.value = _versionCheckUrl || PROJECT_PARAMS.versionCheckUrl || '';
+  const vDisp = document.getElementById('admin-version-display'); if(vDisp) vDisp.textContent = 'v' + APP_VERSION;
 
   document.getElementById('admin-eq-tbody').innerHTML = EQUIPMENT_LIST.map(eq => `<tr class="main-row"><td><strong style="color:var(--blue-txt); font-size:14px;">${eq.id}</strong></td><td style="font-weight:600;">${eq.name}</td><td><span class="tag tag-gray">${eq.type}</span></td>
   <td style="white-space:nowrap;">
@@ -3461,6 +3542,61 @@ function showToast(msg) { const t = document.getElementById('toast'); t.textCont
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
 // ============================================================
+// 📱  BOTTOM NAV + VERSION CHECKER
+// ============================================================
+
+function closeBottomNav() { closeSidebar(); }
+
+function updateBottomNav(viewId) {
+  document.querySelectorAll('.bnav-btn').forEach(b => { b.classList.remove('active'); b.style.color = 'var(--text3)'; });
+  const map = { master:'bnav-master', compliance:'bnav-compliance', admin:'bnav-admin' };
+  const btn = document.getElementById(map[viewId] || 'bnav-eq');
+  if (btn) { btn.classList.add('active'); btn.style.color = 'var(--blue-txt)'; }
+}
+
+let _versionCheckUrl = localStorage.getItem('swing_version_url') || '';
+
+function saveVersionUrl() {
+  _versionCheckUrl = (document.getElementById('admin-version-url')?.value || '').trim();
+  localStorage.setItem('swing_version_url', _versionCheckUrl);
+  PROJECT_PARAMS.versionCheckUrl = _versionCheckUrl;
+  saveData(); showToast('✅ Version URL saved');
+}
+
+async function checkForUpdate(manual = false) {
+  const url = _versionCheckUrl || PROJECT_PARAMS.versionCheckUrl || '';
+  if (!url) { if (manual) showToast('⚠️ Set a Version Check URL in Admin → System Masters first'); return; }
+  try {
+    const resp = await fetch(url + '?t=' + Date.now(), { cache:'no-store', signal:AbortSignal.timeout(8000) });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const latest = (data.version || '').trim();
+    if (!latest) return;
+    const banner = document.getElementById('update-banner');
+    if (latest !== APP_VERSION) {
+      const notes = data.notes ? ' — ' + data.notes : '';
+      if (banner) { banner.style.display = 'flex'; const sp = banner.querySelector('span'); if(sp) sp.textContent = '🆕 v' + latest + ' available (you have v' + APP_VERSION + ')' + notes; }
+      if (manual) showToast('🆕 Update available: v' + latest);
+    } else {
+      if (banner) banner.style.display = 'none';
+      if (manual) showToast('✅ Already on latest version v' + APP_VERSION);
+    }
+  } catch(e) { if (manual) showToast('⚠️ Version check failed: ' + e.message); }
+}
+
+function showIOSInstallGuide() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  if (isIOS && !isStandalone && !localStorage.getItem('ios_install_dismissed')) {
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;bottom:calc(64px + env(safe-area-inset-bottom));left:12px;right:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;z-index:9997;box-shadow:0 4px 20px rgba(0,0,0,0.25);font-size:13px;line-height:1.7;';
+    bar.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><strong style="color:var(--blue-txt);">📱 Install SWING on your iPhone</strong><br>Tap <strong>Share ↑</strong> below → <strong>"Add to Home Screen"</strong><br>Works offline. Opens like a native app.</div><button onclick="this.parentElement.parentElement.remove();localStorage.setItem(\'ios_install_dismissed\',\'1\')" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);">✕</button></div>';
+    document.body.appendChild(bar);
+    setTimeout(() => { try { bar.remove(); } catch(_) {} }, 14000);
+  }
+}
+
+// ============================================================
 // ↩️  UNDO / REDO ENGINE (last 30 activity states)
 // ============================================================
 let _undoStack = [];
@@ -3597,6 +3733,7 @@ async function cloudForcePush() {
       swing_safety_log:        safetyLog,
       swing_ncr_log:           ncrLog,
       swing_compliance_logs:   complianceLogs,
+      swing_ai_config:         { url: AI_CONFIG.url, key: AI_CONFIG.key },
       _clientTs:               Date.now(),
       _forcePush:              true   // tells worker to wipe D1 first — no merge
     };
@@ -3657,6 +3794,50 @@ async function cloudForcePull() {
     if (d.swing_safety_log?.value)        safetyLog        = d.swing_safety_log.value;
     if (d.swing_ncr_log?.value)           ncrLog           = d.swing_ncr_log.value;
     if (d.swing_compliance_logs?.value)   complianceLogs   = d.swing_compliance_logs.value;
+
+    // Restore AI config (URL only — so AI works immediately on any device)
+    if (d.swing_ai_config?.value?.url) {
+      AI_CONFIG.url = d.swing_ai_config.value.url;
+      AI_CONFIG.key = d.swing_ai_config.value.key || '';
+      localStorage.setItem('swing_ai_url', AI_CONFIG.url);
+      localStorage.setItem('swing_ai_key', AI_CONFIG.key);
+      _logCloud(`✅ AI config restored: ${AI_CONFIG.url}`);
+    }
+
+    // ── SAFETY NET: rebuild any equipment missing from cloud using activity logs ──
+    if (activities.length > 0) {
+      // Find all eq IDs referenced in activities
+      const actEqIds = [...new Set(activities.map(a=>a.eq).filter(Boolean))];
+      const knownEqIds = new Set(EQUIPMENT_LIST.map(e=>e.id));
+
+      // Add equipment entries that exist in activities but not in cloud
+      let addedEq = 0;
+      actEqIds.forEach(eqId => {
+        if (!knownEqIds.has(eqId)) {
+          const comps = [...new Set(activities.filter(a=>a.eq===eqId&&a.comp).map(a=>a.comp))].sort();
+          EQUIPMENT_LIST.push({
+            id: eqId, name: eqId, type: 'Reactor', baselineHrs: 0,
+            components: comps.map(name=>({ name, closed: false }))
+          });
+          addedEq++;
+        }
+      });
+
+      // Also fix any existing equipment that has empty components
+      let rebuiltComps = 0;
+      EQUIPMENT_LIST = EQUIPMENT_LIST.map(eq => {
+        if (!eq.components || eq.components.length === 0) {
+          const comps = [...new Set(activities.filter(a=>a.eq===eq.id&&a.comp).map(a=>a.comp))].sort();
+          if (comps.length > 0) { eq.components = comps.map(name=>({ name, closed: false })); rebuiltComps++; }
+        }
+        return eq;
+      });
+
+      if (addedEq > 0 || rebuiltComps > 0) {
+        _logCloud(`⚠️ Rebuilt: added ${addedEq} missing equipment, fixed ${rebuiltComps} empty component lists`);
+        showToast(`⚠️ ${addedEq} equipment rebuilt from logs — update names in Admin → Equipment Manager`);
+      }
+    }
 
     // Persist everything to IndexedDB
     saveData();
@@ -4017,17 +4198,19 @@ function stripMarkdown(text) {
 }
 
 async function callAI(userPrompt, systemOverride = null, maxTokens = 700) {
-  if (!AI_CONFIG.url || !AI_CONFIG.key) {
-    showToast('⚙️ Set up AI proxy URL in Admin → ☁️ Cloud Sync → AI Settings');
+  if (!AI_CONFIG.url) {
+    showToast('⚙️ Set up AI Worker URL in Admin → ☁️ Cloud Sync → AI Settings');
     return null;
   }
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (AI_CONFIG.key) headers['Authorization'] = `Bearer ${AI_CONFIG.key}`;
     const resp = await fetch(AI_CONFIG.url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AI_CONFIG.key}` },
+      headers,
       body: JSON.stringify({
         max_tokens: maxTokens,
-        system: systemOverride || 'You are an expert project engineer assistant for a petrochemical reactor fabrication project (BPCL Bina Refinery, BPREP project). Write in professional technical English suitable for senior management. Be concise and factual.',
+        system: systemOverride || 'You are an expert project engineer assistant for a petrochemical reactor fabrication project (BPCL Bina Refinery, BPREP project). Write in professional technical English suitable for senior management. Be concise and factual. Never use markdown symbols like ** or ##.',
         messages: [{ role: 'user', content: userPrompt }]
       }),
       signal: AbortSignal.timeout(30000)
@@ -4530,6 +4713,7 @@ async function _doCloudSync() {
       swing_idle_excused: compIdleExcused,
       swing_catchup:      catchUpActions,
       swing_sys_status:   systemStatus,
+      swing_ai_config:    { url: AI_CONFIG.url, key: AI_CONFIG.key },
       swing_compliance_config: complianceConfig,
       swing_safety_log:   safetyLog,
       swing_ncr_log:      ncrLog,
@@ -4559,6 +4743,17 @@ async function _doCloudSync() {
       if (d.swing_idle_excused)  compIdleExcused = d.swing_idle_excused;
       if (d.swing_catchup)       catchUpActions  = d.swing_catchup;
       if (d.swing_params)        PROJECT_PARAMS  = deepMergeDefaults(d.swing_params, DEFAULT_PARAMS);
+      if (d.swing_compliance_config) complianceConfig = d.swing_compliance_config;
+      if (d.swing_safety_log)    safetyLog       = d.swing_safety_log;
+      if (d.swing_ncr_log)       ncrLog          = d.swing_ncr_log;
+      if (d.swing_compliance_logs) complianceLogs = d.swing_compliance_logs;
+      // Restore AI config if synced from another device
+      if (d.swing_ai_config?.url && !AI_CONFIG.url) {
+        AI_CONFIG.url = d.swing_ai_config.url;
+        AI_CONFIG.key = d.swing_ai_config.key || '';
+        localStorage.setItem('swing_ai_url', AI_CONFIG.url);
+        localStorage.setItem('swing_ai_key', AI_CONFIG.key);
+      }
 
       // ── Persist merged data to IndexedDB ─────────────────────
       _idbSet('swing_activities',   compactActivities(activities));
@@ -4603,12 +4798,21 @@ window.addEventListener('offline', () => { _cloudStatus = 'offline'; _updateClou
 // Populate cloud config fields when Admin tab is opened
 async function testAIConnection() {
   const el = document.getElementById('ai-test-result');
-  if (!AI_CONFIG.url || !AI_CONFIG.key) { el.style.color='var(--red-txt)'; el.textContent='⚠️ Save AI config first'; return; }
+  if (!AI_CONFIG.url) { el.style.color='var(--red-txt)'; el.textContent='⚠️ Save AI config first'; return; }
   el.style.color='var(--text3)'; el.textContent='🔄 Testing…';
-  const result = await callAI('Reply only with: "SWING AI ready"', null, 20);
-  if (result && result.includes('ready')) { el.style.color='var(--green-txt)'; el.textContent='✅ AI connected'; }
-  else if (result) { el.style.color='var(--orange-txt)'; el.textContent='⚠️ Unexpected response'; }
-  else { el.style.color='var(--red-txt)'; el.textContent='❌ Failed — check URL and key'; }
+  // Send a simple prompt — accept ANY non-empty response as success
+  // (Llama phrasing varies, checking for specific words causes false failures)
+  const result = await callAI('Say only the word: ready', null, 20);
+  if (result && result.trim().length > 0) {
+    el.style.color = 'var(--green-txt)';
+    el.textContent = '✅ AI connected — ' + result.trim().slice(0, 40);
+  } else if (result === null) {
+    el.style.color = 'var(--red-txt)';
+    el.textContent = '❌ No response — check Worker URL';
+  } else {
+    el.style.color = 'var(--red-txt)';
+    el.textContent = '❌ Empty response from AI worker';
+  }
 }
 
 function _populateCloudConfigUI() {
@@ -5172,9 +5376,13 @@ async function initApp() {
         switchView('master');
         updateSystemStatusUI();
         _updateCloudUI();
+        // Restore version check URL
+        if (PROJECT_PARAMS.versionCheckUrl) _versionCheckUrl = PROJECT_PARAMS.versionCheckUrl;
+        else if (localStorage.getItem('swing_version_url')) _versionCheckUrl = localStorage.getItem('swing_version_url');
         setTimeout(() => { if(!durChart || !statChart) renderGlobalCharts(); }, 1000);
-        // Initial cloud sync — pulls any changes from colleagues since last session
         setTimeout(() => triggerCloudSync(true), 2000);
+        setTimeout(() => checkForUpdate(false), 6000);  // silent version check
+        setTimeout(() => showIOSInstallGuide(), 4000);  // iOS install tip
 
     } catch(err) {
         console.error('IndexedDB init failed:', err);
