@@ -222,80 +222,40 @@
   /* V4 version badge */
   .version-badge { font-size: 10px; background: var(--blue); color: #fff; padding: 2px 6px; border-radius: 10px; font-weight: 700; letter-spacing: 0.5px; margin-left: 6px; }
 
-  /* ── MOBILE / iOS PWA ───────────────────────────────────────────── */
+    /* ── MOBILE / iOS PWA ─────────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); z-index: 200; }
-    .sidebar.mobile-open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,0.4); }
-    .hamburger { display: inline-flex !important; align-items: center; min-width: 44px; min-height: 44px; font-size: 22px; }
-    .content { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-    #bottom-nav { display: flex !important; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-    .topbar { padding: 10px 12px; flex-wrap: nowrap; gap: 6px; overflow-x: auto; }
-    #compliance-summary-bar { grid-template-columns: 1fr 1fr !important; }
-    #safety-kpi-row { grid-template-columns: 1fr 1fr !important; }
+    .sidebar { position:fixed;left:0;top:0;bottom:0;z-index:200;transform:translateX(-100%);transition:transform 0.25s cubic-bezier(.4,0,.2,1); }
+    .sidebar.mobile-open { transform:translateX(0);box-shadow:4px 0 32px rgba(0,0,0,0.4); }
+    .hamburger { display:inline-flex !important;min-width:44px;min-height:44px;font-size:22px; }
+    #bottom-nav { display:flex !important; }
+    .content { padding-bottom:calc(80px + env(safe-area-inset-bottom,20px)) !important; }
+    .kpi-grid { grid-template-columns:1fr 1fr !important; }
+    #compliance-summary-bar { grid-template-columns:1fr 1fr !important; }
+    #safety-kpi-row { grid-template-columns:1fr 1fr !important; }
   }
-
   @media (max-width: 640px) {
-    /* Touch targets — minimum 44px per Apple HIG */
-    .btn { min-height: 44px; padding: 0 14px; font-size: 14px; }
-    .nav-item { min-height: 44px; line-height: 44px; }
-    select, input[type="text"], input[type="number"], input[type="date"],
-    input[type="datetime-local"], textarea { min-height: 44px; font-size: 16px !important; /* prevents iOS zoom */ }
-
-    /* Layout */
-    .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-    .main-pad { padding: 12px !important; }
-    .card { border-radius: 10px; }
-    .card-header { padding: 12px 16px; }
-
-    /* Topbar: compact on phone */
-    .topbar { padding: 8px 10px; gap: 4px; }
-    #topbar-title-text { font-size: 13px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .topbar > div:first-child { font-size: 11px; gap: 2px; }
-
-    /* Tables: horizontal scroll with momentum */
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-width: 600px; }
-    th, td { padding: 8px 10px !important; font-size: 12px !important; }
-
-    /* Quick Add: full-width stacked */
-    #quick-add-bar { padding: 12px !important; }
-    #quick-add-bar > div:first-child { flex-direction: column !important; gap: 10px !important; }
-    #quick-add-bar .form-group { min-width: 100% !important; width: 100% !important; }
-
-    /* All tab bars: horizontal scroll */
-    .tabs, #admin-tabs, #compliance-tabs, #eq-tabs {
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      flex-wrap: nowrap !important; scrollbar-width: none;
+    input, select, textarea { font-size:16px !important; } /* prevent iOS zoom on focus */
+    .tabs, #admin-tabs, #compliance-tabs, #eq-tabs, #master-tabs > div:first-child {
+      overflow-x:auto !important; -webkit-overflow-scrolling:touch; scrollbar-width:none; flex-wrap:nowrap !important; display:flex !important;
     }
-    .tabs::-webkit-scrollbar, #admin-tabs::-webkit-scrollbar { display: none; }
-    .tab { white-space: nowrap; flex-shrink: 0; min-height: 44px; line-height: 44px; padding: 0 14px; font-size: 13px; }
-    #master-tabs { flex-direction: column !important; gap: 8px; }
-    #master-tabs > div:first-child { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; display: flex; }
-
-    /* Compliance summary */
-    #compliance-summary-bar { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-    #safety-kpi-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-
-    /* Modals: full screen on phone */
+    .tabs::-webkit-scrollbar, #admin-tabs::-webkit-scrollbar { display:none; }
+    .tab { white-space:nowrap;flex-shrink:0;min-height:44px;padding:0 14px;line-height:44px;font-size:13px; }
+    #master-tabs { flex-direction:column !important;gap:8px; }
+    .table-wrap { overflow-x:auto;-webkit-overflow-scrolling:touch; }
+    #quick-add-bar > div:first-child { flex-direction:column !important;gap:8px !important; }
+    #quick-add-bar .form-group { min-width:100% !important; }
     #add-modal > div, #dpr-preflight-modal > div {
-      width: 100% !important; max-width: 100% !important; margin: 0 !important;
-      border-radius: 16px 16px 0 0 !important; position: fixed !important;
-      bottom: 0 !important; left: 0 !important; right: 0 !important;
-      max-height: 90vh !important; overflow-y: auto !important;
+      position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;
+      width:100% !important;max-width:100% !important;margin:0 !important;
+      border-radius:20px 20px 0 0 !important;max-height:92vh !important;
+      overflow-y:auto !important;-webkit-overflow-scrolling:touch;
     }
-    #add-modal, #dpr-preflight-modal { align-items: flex-end !important; }
-
-    /* Form grids: single column */
-    .modal-grid { grid-template-columns: 1fr !important; }
-
-    /* NCR quick-add: stack */
-    #comp-tab-quality .card > div { flex-direction: column !important; }
-    #ncr-eq, #ncr-comp, #ncr-severity, #ncr-category { min-width: 100% !important; }
+    #add-modal, #dpr-preflight-modal { align-items:flex-end !important; }
+    .topbar { padding:8px 10px !important;gap:4px !important;flex-wrap:nowrap; }
+    #topbar-title-text { font-size:13px !important; }
   }
-
-  /* iOS safe area — notch + home indicator */
-  .content { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  /* notch + home indicator safe areas */
+  .topbar { padding-top:max(10px,env(safe-area-inset-top,10px)); }
   #bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
   .topbar { padding-top: max(10px, env(safe-area-inset-top)); }
 
@@ -327,18 +287,19 @@
 </div>
 
 <!-- BOTTOM NAV (mobile only) -->
-<div id="bottom-nav" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:100; background:var(--bg2); border-top:1px solid var(--border); flex-direction:row; justify-content:space-around; align-items:stretch; padding-bottom:env(safe-area-inset-bottom);">
-  <button onclick="switchView('master');closeBottomNav()" id="bnav-master" class="bnav-btn active" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--blue-txt);">
-    <span style="font-size:20px;">📊</span><span style="font-size:10px;font-weight:600;">Dashboard</span>
+<!-- BOTTOM NAV: padding-bottom on each btn pushes tap targets above iOS home indicator -->
+<div id="bottom-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--bg2);border-top:1px solid var(--border);flex-direction:row;justify-content:space-around;align-items:stretch;">
+  <button onclick="switchView('master');closeSidebar()" id="bnav-master" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:none;border:none;cursor:pointer;padding-top:10px;padding-bottom:max(14px,env(safe-area-inset-bottom));gap:3px;color:var(--blue-txt);">
+    <span style="font-size:22px;">📊</span><span style="font-size:10px;font-weight:700;">Dashboard</span>
   </button>
-  <button onclick="switchView('compliance');closeBottomNav()" id="bnav-compliance" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
-    <span style="font-size:20px;">📋</span><span style="font-size:10px;font-weight:600;">Compliance</span>
+  <button onclick="switchView('compliance');closeSidebar()" id="bnav-compliance" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:none;border:none;cursor:pointer;padding-top:10px;padding-bottom:max(14px,env(safe-area-inset-bottom));gap:3px;color:var(--text3);">
+    <span style="font-size:22px;">📋</span><span style="font-size:10px;font-weight:700;">Compliance</span>
   </button>
-  <button onclick="toggleSidebar()" id="bnav-eq" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
-    <span style="font-size:20px;">🏭</span><span style="font-size:10px;font-weight:600;">Equipment</span>
+  <button onclick="toggleSidebar()" id="bnav-eq" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:none;border:none;cursor:pointer;padding-top:10px;padding-bottom:max(14px,env(safe-area-inset-bottom));gap:3px;color:var(--text3);">
+    <span style="font-size:22px;">🏭</span><span style="font-size:10px;font-weight:700;">Equipment</span>
   </button>
-  <button onclick="switchView('admin');closeBottomNav()" id="bnav-admin" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 4px;gap:3px;min-height:56px;color:var(--text3);">
-    <span style="font-size:20px;">⚙️</span><span style="font-size:10px;font-weight:600;">Admin</span>
+  <button onclick="switchView('admin');closeSidebar()" id="bnav-admin" class="bnav-btn" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:none;border:none;cursor:pointer;padding-top:10px;padding-bottom:max(14px,env(safe-area-inset-bottom));gap:3px;color:var(--text3);">
+    <span style="font-size:22px;">⚙️</span><span style="font-size:10px;font-weight:700;">Admin</span>
   </button>
 </div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -2317,7 +2278,7 @@ function filterEqDailyGrid() {
 }
 
 function renderEquipmentView(eq) {
-  document.getElementById('filter-component').innerHTML = `<option value="">All Components</option>` + (eq.components || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('filter-component').innerHTML = `<option value="">All Components</option>` + [...(eq.components || [])].sort((a,b)=>a.name.localeCompare(b.name)).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
   document.getElementById('filter-component').value = memFilters.eqComp;
   document.getElementById('filter-eq-loc').value = memFilters.eqLoc;
   document.getElementById('filter-eq-status').value = memFilters.eqStat;
@@ -2393,7 +2354,7 @@ function renderEquipmentView(eq) {
   renderVisualTracker(eq);
   
   const oldChartComp = document.getElementById('chart-eq-filter-comp').value;
-  document.getElementById('chart-eq-filter-comp').innerHTML = `<option value="">All Components</option>` + (eq.components || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('chart-eq-filter-comp').innerHTML = `<option value="">All Components</option>` + [...(eq.components || [])].sort((a,b)=>a.name.localeCompare(b.name)).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
   document.getElementById('chart-eq-filter-comp').value = oldChartComp;
   
   const eqCats = [...new Set(activities.filter(a => a.eq === eq.id).map(a => a.category).filter(Boolean))];
@@ -2432,7 +2393,7 @@ function renderQuickAddBar(eq) {
   const hadActiveTask = !!qaActiveId;
 
   // Rebuild options list
-  document.getElementById('qa-comp').innerHTML = `<option value="">Select component...</option>` + (eq.components || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('qa-comp').innerHTML = `<option value="">Select component...</option>` + [...(eq.components || [])].sort((a,b)=>a.name.localeCompare(b.name)).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
   document.getElementById('qa-stage-list').innerHTML = Object.keys(PROJECT_PARAMS.stageMaster).map(s => `<option value="${s}">`).join('');
 
   // Restore previous values if user had something selected
@@ -3564,24 +3525,24 @@ function saveVersionUrl() {
 }
 
 async function checkForUpdate(manual = false) {
-  const url = _versionCheckUrl || PROJECT_PARAMS.versionCheckUrl || '';
-  if (!url) { if (manual) showToast('⚠️ Set a Version Check URL in Admin → System Masters first'); return; }
   try {
-    const resp = await fetch(url + '?t=' + Date.now(), { cache:'no-store', signal:AbortSignal.timeout(8000) });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    // Auto-detect version.json from same URL — no config needed
+    const base = window.location.href.replace(/\/[^/]*$/, '/');
+    const resp = await fetch(base + 'version.json?t=' + Date.now(), { cache:'no-store', signal:AbortSignal.timeout(6000) });
+    if (!resp.ok) { if(manual) showToast('ℹ️ version.json not found — upload it to GitHub alongside index.html'); return; }
     const data = await resp.json();
-    const latest = (data.version || '').trim();
+    const latest = (data.version||'').trim();
     if (!latest) return;
     const banner = document.getElementById('update-banner');
     if (latest !== APP_VERSION) {
-      const notes = data.notes ? ' — ' + data.notes : '';
-      if (banner) { banner.style.display = 'flex'; const sp = banner.querySelector('span'); if(sp) sp.textContent = '🆕 v' + latest + ' available (you have v' + APP_VERSION + ')' + notes; }
-      if (manual) showToast('🆕 Update available: v' + latest);
+      const notes = data.notes ? ' — '+data.notes : '';
+      if (banner) { banner.style.display='flex'; const sp=banner.querySelector('span'); if(sp) sp.textContent='🆕 v'+latest+' available (you have v'+APP_VERSION+')'+notes; }
+      if (manual) showToast('🆕 Update available: v'+latest);
     } else {
-      if (banner) banner.style.display = 'none';
-      if (manual) showToast('✅ Already on latest version v' + APP_VERSION);
+      if(banner) banner.style.display='none';
+      if(manual) showToast('✅ Already on latest: v'+APP_VERSION);
     }
-  } catch(e) { if (manual) showToast('⚠️ Version check failed: ' + e.message); }
+  } catch(_) { if(manual) showToast('ℹ️ Version check skipped — works only on GitHub Pages'); }
 }
 
 function showIOSInstallGuide() {
