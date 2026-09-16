@@ -74,6 +74,10 @@
   .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
   .btn-danger:hover { background: #b3261e; border-color: #b3261e; color: #fff; }
   .bnav-btn.active { color: var(--blue-txt) !important; }
+  @media (max-width: 900px) {
+    .hide-mobile { display: none !important; }
+    .show-mobile-only { display: flex !important; }
+  }
   .bnav-btn.active span:first-child { transform: scale(1.15); }
   .btn-green { background: var(--green-bg); color: var(--green-txt); border-color: var(--green); }
   .btn-green:hover { background: var(--green); color: #fff; }
@@ -313,25 +317,35 @@
       <span id="topbar-title-text">📊 Master Dashboard</span>
     </h2>
     <div class="actions">
-      <!-- SYSTEM PULSE CHECK -->
-      <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-end; font-size:11px; margin-right:12px; padding-right:12px; border-right:1px solid var(--border); white-space:nowrap; gap:2px;">
+      <!-- SYSTEM PULSE — hidden on mobile to save space -->
+      <div class="hide-mobile" style="display:flex; flex-direction:column; justify-content:center; align-items:flex-end; font-size:11px; margin-right:12px; padding-right:12px; border-right:1px solid var(--border); white-space:nowrap; gap:2px;">
         <div style="color:var(--text2);">⏱ Updated: <strong id="sys-last-update" style="color:var(--text);">--</strong></div>
         <div id="sys-backup-status" style="color:var(--text2); transition:0.3s;">💾 Backup: <strong id="sys-last-backup" style="color:var(--text);">--</strong></div>
-        <div id="cloud-sync-indicator" onclick="switchView('admin');switchAdminTab('cloud')" title="Cloud Sync Status — click to configure" style="cursor:pointer; font-weight:600; transition:0.3s;">⚙️ Cloud: Not configured</div>
-        <div style="color:var(--text2);">📋 Logs: <strong id="topbar-log-count" style="color:var(--blue-txt); cursor:pointer;" title="Total activity records — click to verify" onclick="verifyLogCount()">0</strong></div>
+        <div id="cloud-sync-indicator" onclick="switchView('admin');switchAdminTab('cloud')" title="Cloud Sync" style="cursor:pointer; font-weight:600; transition:0.3s;">⚙️ Cloud: Not configured</div>
+        <div style="color:var(--text2);">📋 Logs: <strong id="topbar-log-count" style="color:var(--blue-txt); cursor:pointer;" onclick="verifyLogCount()">0</strong></div>
       </div>
 
-      <button class="btn" id="btn-undo" onclick="undoAction()" title="Undo last change (Ctrl+Z)" style="padding:0 10px; font-size:16px;" disabled>↩️</button>
-      <button class="btn" id="btn-redo" onclick="redoAction()" title="Redo (Ctrl+Y)" style="padding:0 10px; font-size:16px;" disabled>↪️</button>
-      <button class="btn" onclick="toggleTheme()" title="Toggle Dark/Light Theme" style="padding:0 10px; font-size:18px;">🌗</button>
-      <label for="file-upload" class="btn" title="Import from Excel" style="margin:0; padding:0 10px; font-size:18px;">📂</label>
+      <!-- Mobile status strip (compact — shown only on mobile) -->
+      <div class="show-mobile-only" style="display:none; flex-direction:column; font-size:10px; margin-right:6px; color:var(--text2); gap:1px; line-height:1.4;">
+        <div id="cloud-sync-indicator-m" onclick="switchView('admin');switchAdminTab('cloud')" style="cursor:pointer; font-weight:600; color:var(--text3);">☁️ --</div>
+        <div>📋 <strong id="topbar-log-count-m" style="color:var(--blue-txt);">0</strong></div>
+      </div>
+
+      <!-- Buttons hidden on mobile -->
+      <button class="btn hide-mobile" id="btn-undo" onclick="undoAction()" title="Undo (Ctrl+Z)" style="padding:0 10px; font-size:16px;" disabled>↩️</button>
+      <button class="btn hide-mobile" id="btn-redo" onclick="redoAction()" title="Redo (Ctrl+Y)" style="padding:0 10px; font-size:16px;" disabled>↪️</button>
+      <button class="btn hide-mobile" onclick="toggleTheme()" title="Toggle Theme" style="padding:0 10px; font-size:18px;">🌗</button>
+      <label for="file-upload" class="btn hide-mobile" title="Import from Excel" style="margin:0; padding:0 10px; font-size:18px;">📂</label>
       <input type="file" id="file-upload" accept=".xlsx,.xls" style="display:none;">
-      <button class="btn" onclick="exportExcel()" title="Export to Excel" style="padding:0 10px; font-size:18px;">⬇️</button>
-      <button class="btn btn-green" onclick="openDPRPreflight()">🖨️ DPR</button>
-      <button class="btn" id="btn-ai-analyse-eq" onclick="aiAnalyseEquipment(currentView)" style="display:none; background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue-txt);">🤖 AI</button>
-      <div style="display:inline-flex; border-left:1px solid var(--border); padding-left:12px; margin-left:4px; gap:8px;">
-          <button class="btn" onclick="openAddModal('plan')" style="border-color:var(--orange); color:var(--orange-txt);">📅 Plan</button>
-          <button class="btn btn-primary" onclick="openAddModal('exec')">➕ Log</button>
+      <button class="btn hide-mobile" onclick="exportExcel()" title="Export to Excel" style="padding:0 10px; font-size:18px;">⬇️</button>
+
+      <!-- Always visible: DPR, AI (on equipment), Plan, Log -->
+      <button class="btn btn-green" onclick="openDPRPreflight()" style="padding:0 10px;">🖨️ <span class="hide-mobile">DPR</span></button>
+      <button class="btn hide-mobile" id="btn-ai-analyse-eq" onclick="aiAnalyseEquipment(currentView)" style="display:none; background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue-txt);">🤖 AI</button>
+      <button class="btn show-mobile-only" id="btn-ai-analyse-eq-m" onclick="aiAnalyseEquipment(currentView)" style="display:none; padding:0 8px; font-size:16px; background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue-txt);">🤖</button>
+      <div style="display:inline-flex; border-left:1px solid var(--border); padding-left:8px; margin-left:4px; gap:6px;">
+          <button class="btn hide-mobile" onclick="openAddModal('plan')" style="border-color:var(--orange); color:var(--orange-txt);">📅 Plan</button>
+          <button class="btn btn-primary" onclick="openAddModal('exec')">➕ <span class="hide-mobile">Log</span></button>
       </div>
     </div>
   </div>
@@ -1703,6 +1717,9 @@ function updateSystemStatusUI() {
 
     const logCountEl = document.getElementById('topbar-log-count');
     if (logCountEl) logCountEl.textContent = activities.length;
+    // Mobile compact strip
+    const logCountM = document.getElementById('topbar-log-count-m');
+    if (logCountM) logCountM.textContent = activities.length;
 
     // Storage health warning in topbar
     const stg = getStorageUsage();
@@ -2575,25 +2592,30 @@ function quickAddSave() {
   renderEquipmentView(eq);
   renderSidebar();
   // Restore component selection after re-render (renderQuickAddBar resets it)
-  requestAnimationFrame(() => {
+  // Use setTimeout so DOM fully settles after renderEquipmentView before re-applying filters
+  setTimeout(() => {
     const qaComp = document.getElementById('qa-comp');
     if (qaComp && comp) {
       qaComp.value = comp;
-      // Reset stage/dates/hold for new entry but keep component
       const stageEl = document.getElementById('qa-stage');
-      const endEl = document.getElementById('qa-end');
-      const holdEl = document.getElementById('qa-hold');
-      const noteEl = document.getElementById('qa-open-note');
+      const endEl   = document.getElementById('qa-end');
+      const holdEl  = document.getElementById('qa-hold');
+      const noteEl  = document.getElementById('qa-open-note');
       if (stageEl) { stageEl.disabled = false; stageEl.value = ''; }
       if (endEl) endEl.value = '';
       if (holdEl) holdEl.value = '';
       if (noteEl) noteEl.style.display = 'none';
       qaActiveId = null;
-      // Also update the component filter to match
+      // Re-apply component filter so newly added entry appears immediately
       const filterComp = document.getElementById('filter-component');
-      if (filterComp) { filterComp.value = comp; renderEqLog(); }
+      if (filterComp) {
+        filterComp.value = comp;
+        // Also update memFilters directly so renderEqLog uses correct filter
+        memFilters.eqComp = comp;
+        renderEqLog();
+      }
     }
-  });
+  }, 150);
 }
 
 // --- ADMIN CONTROLS ---
@@ -2680,6 +2702,7 @@ function renderAdminView() {
   document.getElementById('admin-storage-bar').style.background = st.pct > 90 ? 'var(--red)' : (st.pct > 70 ? 'var(--orange)' : 'var(--blue)');
   document.getElementById('admin-storage-text').textContent = st.pct + '% (' + (st.used/1024).toFixed(1) + ' KB)';
   renderSnapshotList();
+  renderAdminComplianceLists();
 }
 
 function saveGeneralSettings() { 
@@ -3179,7 +3202,19 @@ function exportExcel(isAutoBackup = false) {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsCuData), 'Catch-Up Register');
 
   let prefix = isAutoBackup ? 'AutoBackup_' : 'Export_';
-  XLSX.writeFile(wb, `${PROJECT_PARAMS.appName.replace(/\s+/g, '_')}_${prefix}${new Date().getTime()}.xlsx`);
+  const fileName = `${PROJECT_PARAMS.appName.replace(/\s+/g, '_')}_${prefix}${new Date().getTime()}.xlsx`;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS) {
+    // iOS Safari doesn't support the download attribute — write to Blob and open in new tab
+    const wbOut = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+    const blob = new Blob([wbOut], { type:'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 2000);
+  } else {
+    XLSX.writeFile(wb, fileName);
+  }
 
   // Reset Backup Counter
   systemStatus.lastBackup = Date.now();
@@ -3776,8 +3811,16 @@ async function cloudForcePull() {
       actEqIds.forEach(eqId => {
         if (!knownEqIds.has(eqId)) {
           const comps = [...new Set(activities.filter(a=>a.eq===eqId&&a.comp).map(a=>a.comp))].sort();
+          // Smart type detection from equipment ID pattern
+          let detectedType = 'Vessel';
+          const eid = eqId.toLowerCase();
+          if (eid.includes('-rb-') || eid.includes('reactor')) detectedType = 'Reactor';
+          else if (eid.match(/^3\d{2}-rb/i)) detectedType = 'Reactor';
+          else if (eid.includes('-vv-') || eid.includes('vessel')) detectedType = 'Vessel';
+          else if (eid.includes('bin') || eid.includes('purge')) detectedType = 'Bin';
+          else if (eid.includes('column')) detectedType = 'Column';
           EQUIPMENT_LIST.push({
-            id: eqId, name: eqId, type: 'Reactor', baselineHrs: 0,
+            id: eqId, name: eqId, type: detectedType, baselineHrs: 0,
             components: comps.map(name=>({ name, closed: false }))
           });
           addedEq++;
@@ -4595,6 +4638,9 @@ function _updateCloudUI() {
     indicator.textContent = `${s.icon} ${s.label}${relTime}`;
     indicator.style.color = s.color;
   }
+  // Mobile compact cloud indicator
+  const indicatorM = document.getElementById('cloud-sync-indicator-m');
+  if (indicatorM) { indicatorM.textContent = `${s.icon} ${_lastCloudSync ? getRelativeTimeStr(_lastCloudSync) : '--'}`; indicatorM.style.color = s.color; }
   if (badge)    { badge.textContent = s.label.replace('Cloud: ',''); badge.style.background = s.bg; badge.style.color = s.color; }
   if (syncTime) { syncTime.textContent = _lastCloudSync ? new Date(_lastCloudSync).toLocaleString() : 'Never'; }
   if (actCount) { actCount.textContent = activities.length + ' local'; }
@@ -5203,12 +5249,7 @@ function bulkImportCompliance(type) {
   if(added) { document.getElementById(`${type}-bulk-input`).value=''; saveData(); renderAdminComplianceLists(); showToast(`✅ ${added} items imported`); }
 }
 
-// Wire into renderAdminView
-const _origRenderAdminView = renderAdminView;
-function renderAdminView() {
-  _origRenderAdminView();
-  renderAdminComplianceLists();
-}
+// renderAdminComplianceLists() is called at end of renderAdminView directly
 
 // ============================================================
 // IndexedDB ENGINE
