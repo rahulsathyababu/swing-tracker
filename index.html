@@ -1536,17 +1536,51 @@
 const DEFAULT_EQUIPMENT = [
   { id: '320-RB-00-4001', name: 'Reactor 1', type: 'Reactor', baselineHrs: 2500, components: [{name:'Shell 1', closed:false}, {name:'Shell 2', closed:false}, {name:'Shell 3', closed:false}, {name:'Shell 4', closed:false}, {name:'CS-01 (S2 to S3)', closed:false}, {name:'Dish Head Top', closed:false}] }
 ];
-const DEFAULT_STAGES = { 
-  'Fitup of LS & CS Weld Joints': {h: 24, c: 'Fitup'}, 
-  'Welding (Root Pass)': {h: 8, c: 'Welding'}, 
-  'Welding (Hot Pass & Fill)': {h: 16, c: 'Welding'}, 
-  'PT (10%) on Final weld': {h: 2, c: 'NDT'}, 
-  'UT (100%) of weld joints': {h: 6, c: 'NDT'}, 
-  'PWHT': {h: 48, c: 'Other'}, 
-  'Hydrotest': {h: 24, c: 'Inspection'}, 
-  'Transit': {h: 96, c: 'Logistics'} 
+const DEFAULT_STAGES = {
+  'Fitup of LS Weld Joints':                  {h: 4,  c: 'Fitup'},
+  'Fitup of CS Weld Joints':                  {h: 16, c: 'Fitup'},
+  'Fitup of LS & CS Weld Joints':             {h: 24, c: 'Fitup'},
+  'Fitup Visual Inspection':                  {h: 4,  c: 'Inspection'},
+  'Alignment for Fitup':                      {h: 4,  c: 'Other'},
+  'Alignment of CS Weld Joints':              {h: 2,  c: 'Other'},
+  'Welding (Root Pass)':                      {h: 8,  c: 'Welding'},
+  'Welding (Hot Pass & Fill)':                {h: 20, c: 'Welding'},
+  'Welding CS Joint (Root Pass)':             {h: 24, c: 'Welding'},
+  'SMAW Outside Welding (Hot Pass & Fill)':   {h: 0,  c: 'Welding'},
+  'SMAW Inside Welding (Hot Pass & Fill)':    {h: 0,  c: 'Welding'},
+  'SAW Welding (Hot Pass & Fill)':            {h: 24, c: 'Welding'},
+  'SAW Outside Welding (Hot Pass & Fill)':    {h: 16, c: 'Welding'},
+  'SAW Inside Welding (Hot Pass & Fill)':     {h: 16, c: 'Welding'},
+  'SAW CS Inside Welding (Hot Pass & Fill)':  {h: 16, c: 'Welding'},
+  'SAW CS Outside Welding (Hot Pass & Fill)': {h: 48, c: 'Welding'},
+  'Backchipping':                             {h: 4,  c: 'Other'},
+  'Backchipping SAW':                         {h: 4,  c: 'Other'},
+  'Backchipping CS':                          {h: 16, c: 'Other'},
+  'PT / MPT on backchipping':                 {h: 4,  c: 'Other'},
+  'MPT (10%) on Final weld':                  {h: 2,  c: 'Inspection'},
+  'PT (10%) on Final weld':                   {h: 2,  c: 'NDT'},
+  'UT (100%) of weld joints':                 {h: 6,  c: 'Inspection'},
+  'PAUT Readiness':                           {h: 16, c: 'Readiness'},
+  'PAUT':                                     {h: 4,  c: 'NDT'},
+  'PAUT of weld joints':                      {h: 4,  c: 'NDT'},
+  'PAUT of CS weld joints':                   {h: 0,  c: 'NDT'},
+  'PAUT of LS weld joints':                   {h: 0,  c: 'NDT'},
+  'PAUT Rescan of CS weld joints':            {h: 0,  c: 'NDT'},
+  'PWHT':                                     {h: 48, c: 'Other'},
+  'Hydrotest':                                {h: 24, c: 'Inspection'},
+  'Transit':                                  {h: 72, c: 'Logistics'},
+  'Done':                                     {h: 1,  c: 'Done'},
+  'TR':                                       {h: 0,  c: 'Other'},
 };
-const DEFAULT_TRACKER = [ {pill: 'ARRIVED', cat: 'Logistics'}, {pill: 'FIT-UP', cat: 'Fitup'}, {pill: 'WELDING', cat: 'Welding'}, {pill: 'INSP', cat: 'Inspection'}, {pill: 'NDT', cat: 'NDT'}, {pill: 'DONE', cat: 'Assembly'} ];
+const DEFAULT_TRACKER = [
+  {pill: 'ARRIVED',   cat: 'Logistics'},
+  {pill: 'ASSEMBLY',  cat: 'Assembly'},
+  {pill: 'FIT-UP',    cat: 'Fitup'},
+  {pill: 'PRE-INSP',  cat: 'Inspection'},
+  {pill: 'WELDING',   cat: 'Welding'},
+  {pill: 'PAUT/TOFD', cat: 'NDT'},
+  {pill: 'COMPLETED', cat: 'Done'},
+];
 
 const DEFAULT_DPR_CONFIG = {
     title: 'Site Fabricated Reactors - BPCL Bina', docNo: '', sigs: 'Prepared By, Checked By, Approved By',
@@ -2588,34 +2622,26 @@ function quickAddSave() {
   }
 
   saveData();
-  // Re-render but restore the same component so user can quickly add another entry
-  renderEquipmentView(eq);
+
+  // ── Targeted refresh — NO full renderEquipmentView (that caused the race condition) ──
+  // 1. Update sidebar progress % only
   renderSidebar();
-  // Restore component selection after re-render (renderQuickAddBar resets it)
-  // Use setTimeout so DOM fully settles after renderEquipmentView before re-applying filters
-  setTimeout(() => {
-    const qaComp = document.getElementById('qa-comp');
-    if (qaComp && comp) {
-      qaComp.value = comp;
-      const stageEl = document.getElementById('qa-stage');
-      const endEl   = document.getElementById('qa-end');
-      const holdEl  = document.getElementById('qa-hold');
-      const noteEl  = document.getElementById('qa-open-note');
-      if (stageEl) { stageEl.disabled = false; stageEl.value = ''; }
-      if (endEl) endEl.value = '';
-      if (holdEl) holdEl.value = '';
-      if (noteEl) noteEl.style.display = 'none';
-      qaActiveId = null;
-      // Re-apply component filter so newly added entry appears immediately
-      const filterComp = document.getElementById('filter-component');
-      if (filterComp) {
-        filterComp.value = comp;
-        // Also update memFilters directly so renderEqLog uses correct filter
-        memFilters.eqComp = comp;
-        renderEqLog();
-      }
-    }
-  }, 150);
+  // 2. Set filter to this component and re-render just the log
+  memFilters.eqComp = comp;
+  const filterComp = document.getElementById('filter-component');
+  if (filterComp) filterComp.value = comp;
+  renderEqLog();
+  // 3. Reset quick-add fields but keep component selected
+  const stageEl = document.getElementById('qa-stage');
+  const endEl   = document.getElementById('qa-end');
+  const holdEl  = document.getElementById('qa-hold');
+  const noteEl  = document.getElementById('qa-open-note');
+  if (stageEl) { stageEl.disabled = false; stageEl.value = ''; }
+  if (endEl)   endEl.value = '';
+  if (holdEl)  holdEl.value = '';
+  if (noteEl)  noteEl.style.display = 'none';
+  qaActiveId = null;
+  // qa-comp keeps its current value — user stays on same component for rapid entry
 }
 
 // --- ADMIN CONTROLS ---
@@ -3203,17 +3229,17 @@ function exportExcel(isAutoBackup = false) {
 
   let prefix = isAutoBackup ? 'AutoBackup_' : 'Export_';
   const fileName = `${PROJECT_PARAMS.appName.replace(/\s+/g, '_')}_${prefix}${new Date().getTime()}.xlsx`;
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  if (isIOS) {
-    // iOS Safari doesn't support the download attribute — write to Blob and open in new tab
-    const wbOut = XLSX.write(wb, { bookType:'xlsx', type:'array' });
-    const blob = new Blob([wbOut], { type:'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = fileName;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 2000);
-  } else {
+  try {
     XLSX.writeFile(wb, fileName);
+  } catch(_) {
+    // Fallback for iOS Safari which blocks programmatic downloads
+    const wbOut = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+    const blob  = new Blob([wbOut], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url   = URL.createObjectURL(blob);
+    const a     = document.createElement('a');
+    a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 3000);
   }
 
   // Reset Backup Counter
@@ -3687,6 +3713,7 @@ async function restoreSnapshot(idx) {
   const ACT_EXP = { category:'Other',location:'Site',agency:'VTV',desc:'',pStart:'',pEnd:'',fStart:'',fEnd:'',dependsOn:'',critical:false,holdReason:'',vtv:'Pending',tpia:'Pending',lteh:'Pending',pmc:'Pending',remarks:'',trackingUrl:'' };
   activities = (s.data.activities||[]).map(a=>Object.assign({},ACT_EXP,a));
   if (s.data.equipment) EQUIPMENT_LIST = _normalizeEquipment(s.data.equipment);
+  if (s.data.params)    PROJECT_PARAMS  = deepMergeDefaults(JSON.parse(JSON.stringify(s.data.params)), DEFAULT_PARAMS);
   dailyNotes = s.data.dailyNotes||{}; eqStats=s.data.eqStats||{}; compReadiness=s.data.compReadiness||{};
   compIdleExcused=s.data.compIdleExcused||{}; catchUpActions=s.data.catchUpActions||[];
   if(s.data.complianceConfig) complianceConfig = s.data.complianceConfig;
@@ -5365,6 +5392,18 @@ async function initApp() {
         catchUpActions = (await _idbGet('swing_catchup'))     || [];
         manpowerLog    = (await _idbGet('swing_manpower_log'))  || [];
         analyticsLog   = (await _idbGet('swing_analytics_log')) || [];
+
+        // ── Safety net: ensure every stage used in activities exists in stageMaster ──
+        // This prevents activity types from disappearing if params are ever reset/lost
+        activities.forEach(a => {
+          if (a.stage && !PROJECT_PARAMS.stageMaster[a.stage]) {
+            PROJECT_PARAMS.stageMaster[a.stage] = { h: 0, c: 'Other' };
+          }
+        });
+        // Always merge DEFAULT_STAGES so user's list is never shorter than defaults
+        Object.entries(DEFAULT_STAGES).forEach(([k,v]) => {
+          if (!PROJECT_PARAMS.stageMaster[k]) PROJECT_PARAMS.stageMaster[k] = v;
+        });
         complianceConfig = (await _idbGet('swing_compliance_config')) || { contractual:[], statutory:[], safety:[], quality:[] };
         safetyLog      = (await _idbGet('swing_safety_log'))    || [];
         ncrLog         = (await _idbGet('swing_ncr_log'))       || [];
